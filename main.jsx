@@ -1,7 +1,8 @@
 import React from 'react';
 import { render } from 'react-dom';
 import $ from 'jquery';
-import CollectionList from './imports/components/CollectionList.jsx';
+import Collection_List from './imports/components/Collection_List.jsx';
+import Session from './imports/modules/session';
  
 const css = require("./main.less");
 
@@ -27,30 +28,44 @@ class Module {
 //Compile the app build from imports or other various methods 
 class App_Build {
     constructor() {
+        this.productCategoryPages();
+    }
+    productCategoryPages(){
+        let category = {};
+
         const target = $("#render-target");
         const url = $(target).data("url");
-        const category = $(target).data("category");
 
-        if(target.length > 0){
+        category.name = $(target).data("category");
+
+        if( category.name !== undefined) {
+           category.url = encodeURIComponent( $(target).data("category") );
+        }
+
+        if (target.length > 0) {
             //add loader
             $(target).append("<div class='loader-wrapper'><div class='loader'></div></div>");
 
             //get the data from the url
-            const request = this.getPageData(url + "?category=" + category);
+            const request = this.getPageData(url, category.name);
 
             $.when(request).done((data) => {
+                Session.set('sqs-data', data);
+
                 const fellowsList = new Module(
-                    <CollectionList data={data} category={category} target={target}/>
+                    <Collection_List data={data} category={category.name} target={target}/>
                 );
 
             });           
-        }
-    }
-    getPageData(url){
+        }        
+    }   
+    getPageData(url, categoryName) {
+
         return $.ajax({
             url: url,
             data: {
-                format: "json"
+                format: "json",
+                category: categoryName
             },
             dataType: "jsonp",
             success: (result) => {

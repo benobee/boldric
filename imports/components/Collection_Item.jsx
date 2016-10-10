@@ -7,13 +7,15 @@ class CollectionItem extends React.Component {
         super(props);
         this.displayName = this.props.item.name;
         this.state = {
+            dislayName: this.props.item.name,
             className : "item"
         }
     }
     componentWillReceiveProps(nextProps) {
+        this.displayName = nextProps.item.name;
         setTimeout(() => {
             this.setState({className: "item active"});
-        }, 200);             
+        }, 300);
     }
     componentDidMount() {
         setTimeout(() => {
@@ -27,7 +29,22 @@ class CollectionItem extends React.Component {
             return <div className="no-stock">Sold Out</div>
         }
     }
-    render() {   
+    navigateToPage(){
+        window.location.pathname = this.props.item.fullUrl;
+    }
+    render() {
+        let productItem = {
+            className : "item-thumbnail-wrapper"
+        };
+
+        if (this.props.item.images.length > 1){
+            productItem.hasSecondImage = true;
+        }
+
+        if (productItem.hasSecondImage) {
+            productItem.className = "item-thumbnail-wrapper has-second-image";
+        }
+
         const imageArray = this.props.item.images.map((item, index) => {
 
             const divStyle = {
@@ -35,7 +52,7 @@ class CollectionItem extends React.Component {
             }
 
             return (
-                <div className="image" key={index} style={divStyle}></div>
+                <div className="image" key={[item.id + "_" + index]} style={divStyle}></div>
             )
         });
 
@@ -43,13 +60,13 @@ class CollectionItem extends React.Component {
         
         return (
 
-            <div className={this.state.className}
+            <a href={this.props.item.fullUrl} className={this.state.className}
                 data-url={this.props.item.fullUrl}
                 data-class={this.props.item.tag}
                 data-region={this.props.item.category}>
 
                 <div className="item-content">
-                    <div className="item-thumbnail-wrapper">
+                    <div className={productItem.className}>
                         {images}
                     </div>
                     {this.showNoStock()}
@@ -58,7 +75,7 @@ class CollectionItem extends React.Component {
                     <div className="title">{this.props.item.name}</div>
                     <Price price={this.props.item.price}/>
                 </div>                
-            </div> 
+            </a> 
         )
     }
 }
