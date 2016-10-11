@@ -1,6 +1,7 @@
 const webpack = require("webpack");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const PROD = JSON.parse(process.env.PROD_ENV || '1');
+const PROD = JSON.parse(process.env.PROD_ENV || '0');
+const StaticSiteGeneratorPlugin = require('static-site-generator-webpack-plugin');
 
 const config = {
 	context: __dirname,
@@ -56,7 +57,8 @@ const config = {
 	    'process.env': {
 	      "NODE_ENV": JSON.stringify('production')
 	    }
-	  })
+	  }),
+	  new StaticSiteGeneratorPlugin('bundle.js', data.routes, data)
 	] : [
 	  new webpack.ProvidePlugin({
 	      'Promise': 'es6-promise', 

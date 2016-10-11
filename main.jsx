@@ -1,8 +1,8 @@
 import React from 'react';
-import { render } from 'react-dom';
+import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import Collection_List from './imports/components/Collection_List.jsx';
-import Session from './imports/modules/session';
+import ReactDOMServer from 'react-dom/server';
  
 const css = require("./main.less");
 
@@ -18,7 +18,7 @@ class Module {
   }
   renderToDOM(Component) {
     if (Component.props.target.length > 0) {
-        render(
+        ReactDOM.render(
             Component, Component.props.target[0]
         );
     };
@@ -50,12 +50,18 @@ class App_Build {
             const request = this.getPageData(url, category.name);
 
             $.when(request).done((data) => {
-                Session.set('sqs-data', data);
 
                 const fellowsList = new Module(
                     <Collection_List data={data} category={category.name} target={target}/>
                 );
 
+                // const component = ReactDOMServer.renderToStaticMarkup(<Collection_List data={data} category={category.name} target={target}/>);
+
+                // const html = {__html: component};
+
+                // ReactDOM.render(
+                //     <div dangerousSetInnerHTML={html}, target[0] />
+                // );
             });           
         }        
     }   
@@ -78,6 +84,12 @@ class App_Build {
     }
 };
 
+
 const App = new App_Build();
+
+window.Boldric_App_Build = new App_Build();
+
+
+
 
 

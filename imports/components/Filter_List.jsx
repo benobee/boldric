@@ -31,12 +31,13 @@ class Filter_List extends React.Component {
         this.setState({filterMenuClassName: "items"});
 
         const filterName = e.currentTarget.getAttribute("data-name");
+        
         const type = e.currentTarget.getAttribute("data-type");
 
-        // if (type == "category") {
-        //     window.location.hash = this.convertToSlug(filterName);
-        // }
-
+        this.setUIStatus(type, filterName);
+        this.setSearchFilter(type, filterName);
+    }
+    setUIStatus(type, filterName){
         //remove active class for item animation on mount
         const clearActiveFilters = _.where(this.refs, {filterType: type});
 
@@ -46,8 +47,9 @@ class Filter_List extends React.Component {
 
         const setActiveFilter = _.where(this.refs, {displayName: filterName, filterType: type});
 
-        setActiveFilter['0'].setState({className: "item active", active: true});
-
+        setActiveFilter['0'].setState({className: "item active", active: true});      
+    }
+    setSearchFilter(type, filterName){
         //create filter object
         this.setState({activeFilter: filterName});
 
@@ -57,7 +59,7 @@ class Filter_List extends React.Component {
         if(type == "category") {
             delete collection.tag;
             collection.setState({filterUpdated : filterName});
-        }
+        } 
 
         if(filterName == "All") {
             collection[this.props.type] = undefined;
@@ -67,7 +69,6 @@ class Filter_List extends React.Component {
             collection[this.props.type] = filterName;
             collection.setState({filterUpdated : filterName});
         }
-
     }
     render() {
     	const tags = this.props.tags;

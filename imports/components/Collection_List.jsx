@@ -107,6 +107,11 @@ class Collection_List extends React.Component {
             )
         }
     }
+    convertToHash(obj){
+        return Object.keys(obj).map(function(key){ 
+          return encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]); 
+        }).join('&');   
+    }
     render() {
         let search = {};
 
@@ -117,6 +122,10 @@ class Collection_List extends React.Component {
         if (this.tag !== undefined) {
             search.tag = this.tag;
         }
+
+        const hash = this.convertToHash(search);
+
+        window.location.hash = hash;
 
         const results = _.where(this.fullArray, search);
 
